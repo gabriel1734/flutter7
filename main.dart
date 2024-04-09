@@ -1,9 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/nova_tela.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MaterialApp(
+    home: NovaTela(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -58,54 +59,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  int _y = 0;
-  final TextEditingController _controlaSoma = TextEditingController();
-  final TextEditingController _controlaOp = TextEditingController();
-  Icon certo = const Icon(Icons.check);
-  Icon errado = const Icon(Icons.close);
-  Icon saida = const Icon(Icons.question_mark);
-  List _x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  int _z = 1;
-  Map _resposta = {};
-
-  void trocarOperador() {
-    setState(() {
-      _x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      _z = int.parse(_controlaOp.text);
-      _resposta.clear();
-      _y = _x[Random().nextInt(_x.length)];
-    });
-  }
-
-  void corrigir() {
-    int soma = _z + _y;
-    String digitado = _controlaSoma.text;
-    int resultado = int.parse(digitado);
-
-    setState(() {
-      if (soma == resultado) {
-        saida = certo;
-        _x.remove(_y);
-        _resposta.addAll({'$_z+$_y': certo});
-      } else {
-        saida = errado;
-        _resposta.addAll({'$_z+$_y': errado});
-      }
-      _controlaSoma.text = '';
-      if (_x.isEmpty) {
-        _y = 0;
-      } else {
-        _y = _x[Random().nextInt(_x.length)];
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _y = Random().nextInt(10);
-  }
 
   void _incrementCounter() {
     setState(() {
@@ -116,7 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
-    _y = Random().nextInt(10);
   }
 
   @override
@@ -156,126 +108,13 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Row(
-              children: [
-                Text('$_z + $_y = '),
-                SizedBox(
-                  width: 50,
-                  child: TextField(
-                    controller: _controlaSoma,
-                  ),
-                ),
-              ],
+            const Text(
+              'You have pushed the button this many times:',
             ),
-            ElevatedButton(
-              onPressed: corrigir,
-              child: const Text('Corrigir'),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
-            SizedBox(
-              height: 32,
-              width: 32,
-              child: saida,
-            ),
-            Table(
-              border: TableBorder.all(),
-              children: [
-                TableRow(children: [
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+0'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+1'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+2'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+3'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+4'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+5'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+6'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+7'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+8'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+9'],
-                    ),
-                  ),
-                  TableCell(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: _resposta['$_z+10'],
-                    ),
-                  ),
-                ])
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Digite um novo operador caso deseje trocar: '),
-                SizedBox(
-                  width: 50,
-                  child: TextField(
-                    controller: _controlaOp,
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: trocarOperador,
-                  child: const Text('Enviar'),
-                ),
-              ],
-            )
           ],
         ),
       ),

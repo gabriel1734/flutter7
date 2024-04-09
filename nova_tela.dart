@@ -1,19 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/Poste.dart';
+import 'package:flutter_application_1/Poste.dart';
 import 'package:http/http.dart' as http;
-
-Future<Poste> buscaPOSTE(int n) async {
-  final resposta = await http
-      .get(Uri.parse('https://jsonplaceholder.typicode.com/posts/${n}'));
-
-  if (resposta.statusCode == 200) {
-    // 200 é OK
-    return Poste.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Falha ao carregar poste.');
-  }
-}
 
 class NovaTela extends StatefulWidget {
   const NovaTela({super.key});
@@ -24,27 +12,75 @@ class NovaTela extends StatefulWidget {
 
 class _NovaTelaState extends State<NovaTela> {
   late Future<Poste> futuroPoste;
-  List<String> listView = [];
-  int n = 1;
+  int cont = 1;
+  List<Poste> posts = [];
 
-  void novoPost() {}
+  Future<Poste> buscaPOSTE(int n) async {
+    final resposta = await http
+        .get(Uri.parse('https://jsonplaceholder.typicode.com/posts/$n'));
+
+    if (resposta.statusCode == 200) {
+      // 200 é OK
+      final post =
+          Poste.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
+      setState(() {
+        posts.add(post);
+      });
+      return post;
+    } else {
+      throw Exception('Falha ao carregar poste.');
+    }
+  }
+
+  void novoPoste() {
+    setState(() {
+      cont++;
+      futuroPoste = buscaPOSTE(cont);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    futuroPoste = buscaPOSTE(n);
-    listView.add(futuroPoste.toString());
+    futuroPoste = buscaPOSTE(cont);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Mostrando Post!!!")),
+      appBar: AppBar(
+        title: const Text('Mostrando Posts'),
+      ),
       body: Column(
         children: [
-          ListView.builder(itemBuilder: (context, index) {
-            return Text(listView[index]);
-          })
+          Center(
+            child: FutureBuilder<Poste>(
+              future: futuroPoste,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data!.titulo);
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+
+                // By default, show a loading spinner.
+                return const CircularProgressIndicator();
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: ElevatedButton(
+                onPressed: novoPoste, child: const Text('Novo Poste')),
+          ),
+          ListView.builder(
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(posts[index].titulo),
+              );
+            },
+          ),
         ],
       ),
     );
